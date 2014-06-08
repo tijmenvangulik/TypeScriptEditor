@@ -264,12 +264,15 @@ define(function(require, exports, module) {
             Close: function () {
             }
         };
-        var compiler = new TypeScript.TypeScriptCompiler(outfile, outerr, new TypeScript.NullLogger(), new TypeScript.CompilationSettings());
+        //outfile, removed
+        var compiler = new TypeScript.TypeScriptCompiler(outerr, new TypeScript.NullLogger(), new TypeScript.CompilationSettings());
+        compiler.outfile=
         compiler.addUnit(typeScriptContent, "output.js", false);
         compiler.typeCheck();
-        compiler.emit(false, function (name) {
+        //compiler.emit(false, function (name) {
 
-        });
+        //});
+        compiler.emitToOutfile(outfile);
         return output;
     }
 
@@ -289,7 +292,10 @@ define(function(require, exports, module) {
         script.textContent = outputEditor.getSession().doc.getValue();
         external.window.document.body.appendChild(script);
     }
-
+	function javascriptCompile() {
+		var script = Compile(editor.getSession().doc.getValue());
+		outputEditor.getSession().doc.setValue(script);
+	}
     $(function(){
         appFileService = new FileService($);
         editor = ace.edit("editor");
@@ -344,7 +350,8 @@ define(function(require, exports, module) {
             if(text == "."){
                 editor.commands.exec("autoComplete");
 
-            }else if (editor.getSession().getDocument().isNewLine(text)) {
+            }
+            /*else if (editor.getSession().getDocument().isNewLine(text)) {
                 var lineNumber = editor.getCursorPosition().row;
                 var option = new Services.EditorOptions();
                 option.NewLineCharacter = "\n";
@@ -352,7 +359,7 @@ define(function(require, exports, module) {
                 if(indent > 0) {
                     editor.commands.exec("inserttext", editor, {text:" ", times:indent});
                 }
-            }
+            }*/
         };
 
         editor.addEventListener("mousedown", function(e){
@@ -397,6 +404,7 @@ define(function(require, exports, module) {
         $("#javascript-run").click(function(e){
             javascriptRun();
         });
+
 
         $("#select-sample").change(function(e){
             var path = "samples/" + $(this).val();

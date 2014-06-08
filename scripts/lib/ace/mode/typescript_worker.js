@@ -150,12 +150,13 @@ define(function(require, exports, module) {
                 Close: function () {
                 }
             };
-            var compiler = new TypeScript.TypeScriptCompiler(outfile, outerr, new TypeScript.NullLogger(), new TypeScript.CompilationSettings());
+            var settings =  new TypeScript.CompilationSettings(); //tgul set to ES5
+            settings.CodeGenTarget = TypeScript.CodeGenTarget.ES5;
+            //remove out file
+            var compiler = new TypeScript.TypeScriptCompiler( outerr, new TypeScript.NullLogger(),settings);
             compiler.addUnit(typeScriptContent, "output.js", false);
             compiler.typeCheck();
-            compiler.emit(false, function (name) {
-
-            });
+            compiler.emitToOutfile(outfile);
 
             return output;
         };
